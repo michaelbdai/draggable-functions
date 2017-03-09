@@ -1,4 +1,4 @@
-# raggable-functions
+# Draggable-functions
 
 ## Instruction
 > clone the repo and open the index.html
