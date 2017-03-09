@@ -18,12 +18,12 @@ class DropZone extends React.Component {
   handleDrop(e) {
     // console.log('enter-drop')
     e.target.style.border = "2px solid #0087F7";
-    if (this.state.selected === null) {
+    if (this.state.selected === null && !this.props.disabled ) {
       let functionName = e.dataTransfer.getData('functionName');
       // console.log(functionName);
       this.setState({
         selected: functionName,
-      })
+      });
       this.props.handleSelect(functionName, this.props.index);
     }
   }
@@ -31,13 +31,13 @@ class DropZone extends React.Component {
     // console.log('enter-enter')
   }
   handleDragLeave(e) {
-    if (this.state.selected === null) {
+    if (this.state.selected === null && !this.props.disabled) {
       e.target.style.border = "2px dashed #0087F7";
     }
   }
   handleDragOver(e) {
     // console.log('enter-over')
-    if (this.state.selected === null) {
+    if (this.state.selected === null && !this.props.disabled) {
       e.target.style.border = "2px dashed red";
     }
     e.preventDefault();
@@ -46,7 +46,12 @@ class DropZone extends React.Component {
   render() {
     return (<div
       className="dropzone"
-      style={{width: this.props.width || '100%'}}
+      style={{
+        width: this.props.width || '100%',
+        border: this.props.disabled ?
+          "2px solid #0087F7" :
+          "2px dashed #0087F7",
+      }}
       onDrop={this.handleDrop}
       onDragEnger={this.handleDragEnter}
       onDragLeave={this.handleDragLeave}
@@ -61,7 +66,7 @@ class DropZone extends React.Component {
     </div>);
 
   }  
-}
+};
 
 
 export default DropZone;

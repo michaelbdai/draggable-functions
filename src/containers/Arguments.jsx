@@ -8,30 +8,36 @@ class Arguments extends React.Component {
   constructor(props) {
     // console.log('Arguments----')
     super(props);
+    this.state = {
+      counterId: this.props.functionsCount - 1,
+      functionName: this.props.lastFnName,
+    };
     this.handleChange = this.handleChange.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
   }
   handleChange(e) {
     // console.log(e.target);
     // console.log(e.target.id);
-    this.props.changeInputValue(this.props.functionName, e.target.id, e.target.value)
+    this.props.changeInputValue(this.state.counterId, e.target.id, e.target.value);
   }
   handleSelect(functionName, index) {
     let functionArg = 
-      new Array(this.props.functionList[functionName].length).fill(undefined)
-    this.props.selectFunction(functionName, functionArg, this.props.functionName, index)
+      new Array(this.props.functionList[functionName].length).fill(undefined);
+    this.props.selectFunction(functionName, functionArg, this.state.functionName, index);
   }
   render() {
-    let counter = this.props.functionsArg[this.props.functionName].length;
+    // console.log(this.props.functionsArg);
+    // console.log(this.props.functionsCount);
+    let counter = this.props.functionsArg[this.state.counterId].length;
     return (
       <div>
         <Item
-          functionName={this.props.functionName}
-          key={this.props.functionName}
+          functionName={this.state.functionName}
+          key={this.state.functionName}
           style={{width: `${Math.floor(80 / (counter + 1))}`}}
         />
-        <form onSubmit={this.handleSubmit}>
-          {this.props.functionsArg[this.props.functionName]
+        <form >
+          {this.props.functionsArg[this.state.counterId]
             .map((useless, index, array) => (
               <DropZone
                 handleSelect={this.handleSelect}
@@ -59,16 +65,17 @@ class Arguments extends React.Component {
 const mapStateToProps = (state) => ({
   functionsArg: state.functionsArg,
   functionList: state.functionList,
-})
+  lastFnName: state.lastFnName,
+  functionsCount:state.functionsCount,
+});
 const mapDispatchToProps = (dispatch) => ({
-  changeInputValue: (functionName, argIndex, value) => {
-    dispatch(updateInputValue(functionName, argIndex, value));
+  changeInputValue: (functionsCount, argIndex, value) => {
+    dispatch(updateInputValue(functionsCount, argIndex, value));
   },
-  selectFunction: (functionName, functionArg, targetFunction, argIndex) => {
-    dispatch(addFunction(functionName, functionArg));
-    dispatch(addChain(functionName, targetFunction, argIndex));
+  selectFunction: (functionName, functionArg, targetFn, targetIndex) => {
+    dispatch(addFunction(functionName, functionArg, targetFn, targetIndex));
   },
-})
+});
 
 Arguments = connect(mapStateToProps, mapDispatchToProps)(Arguments);
 export default Arguments;

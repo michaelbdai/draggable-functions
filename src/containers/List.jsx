@@ -15,7 +15,7 @@ class List extends React.Component {
 
     )
   }
-}
+};
 const mapStateToProps = (state) => ({
   data: state.functionList,
 });

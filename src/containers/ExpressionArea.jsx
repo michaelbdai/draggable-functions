@@ -9,6 +9,7 @@ class ExpressionArea extends React.Component {
     super(props);
     this.state = {
       functionName: this.props.functionName || null,
+      dropZoneDisabled: !!this.props.functionName
     };
     this.handleSelect = this.handleSelect.bind(this);
   }
@@ -18,34 +19,35 @@ class ExpressionArea extends React.Component {
       functionName: functionName,
     });
     let functionArg = 
-      new Array(this.props.functionList[functionName].length).fill(undefined)
-    this.props.selectFunction(functionName, functionArg)
+      new Array(this.props.functionList[functionName].length).fill(undefined);
+    this.props.selectFunction(functionName, functionArg);
   }
   render() {
     return(
       <DropZone
         handleSelect={this.handleSelect}
         index={0}
+        disabled={this.state.dropZoneDisabled}
       >
         {
           this.state.functionName === null ? 
-          <div className="memo"> Drag a function icon to here </div>
+          <div className="memo exp-area"> Drag a function icon to here </div>
            :
-          <Arguments functionName={this.state.functionName} />
+          <Arguments functionCounter={this.props.id} />
         }
       </DropZone>
     )
   }
-}
+};
 const mapStateToProps = (state) => ({
   functionList: state.functionList
-})
+});
 const mapDispatchToProps = (dispatch) => ({
   selectFunction: (functionName, functionArg) => {
     // console.log('dispatch', typeof dispatch);
     dispatch(addFunction(functionName, functionArg))},
 
-})
+});
 
 ExpressionArea = connect(mapStateToProps, mapDispatchToProps)(ExpressionArea);
 export default ExpressionArea;

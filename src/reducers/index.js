@@ -29,40 +29,32 @@ const copyOfObj = (obj) => {
 const initialState = {
   // expressionAreaArray: [true],
   functionList: FUNCTIONS,
-  selectedFunctions: [], //array of function name
-  functionsArg: {}, //{function1:[arr1, arr2, ...], function2: ..., ..}
-  functionsChain: {}, //{function2:[function1, 2]}, 2 => result pass to 2nd arg of function 1 
+  // selectedFunctions: [], //[fn1, fn2, fn1]array of function name
+  functionsArg: [], //[[arr1, arr2, ...], [...]: ..., ..]
+  functionsChain: [], //[null, [fn1, 1],... [fn2, 0],...]
+  functionsCount: 0,
+  lastFnName: '',
 }
 let functionsArgCopy
 export default (state = initialState, action) => {
   switch (action.type) {
-    case 'ADD_EXP_AREA': 
-      return {
-        ...state,
-        expressionAreaArray: state.expressionAreaArray.concat([true])
-      };
     case 'ADD_FUNCTION': 
-      functionsArgCopy = copyOfObj(state.functionsArg);
-      functionsArgCopy[action.functionName] = action.functionArg;
       return {
         ...state,
-        selectedFunctions: state.selectedFunctions.concat(action.functionName),
-        functionsArg: functionsArgCopy,
+        functionsChain: state.functionsChain.concat([action.functionChain]),
+        functionsArg: state.functionsArg.concat([action.functionArg]),
+        lastFnName: action.functionName,
+        functionsCount: state.functionsCount + 1,
+
       };
     case 'UPDATE_INPUTVALUE':
-      functionsArgCopy = copyOfObj(state.functionsArg);
-      functionsArgCopy[action.functionName][action.argIndex] = action.value;
+      functionsArgCopy = copyOfArray(state.functionsArg);
+      functionsArgCopy[action.functionCounter][action.argIndex] = action.value;
       return {
         ...state,
         functionsArg: functionsArgCopy,
       };
-    case 'ADD_CHAIN':
-      let functionsChainCopy = copyOfObj(state.functionsChain);
-      functionsChainCopy[action.currentFunction] = [action.targetFunction, action.argIndex];
-      return {
-        ...state,
-        functionsChain: functionsChainCopy,
-      };
+
     case 'RESET' : 
       return initialState;
     default:

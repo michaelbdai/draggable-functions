@@ -6,7 +6,6 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "run": "nodemon server.js",
     "build": "webpack -d -w"
   },
   "dependencies": {

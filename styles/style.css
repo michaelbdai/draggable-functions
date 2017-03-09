@@ -56,9 +56,12 @@
 .reset {
   background-color: red;
 }
+.exp-area {
+  width: 30%;
+  margin-left: 35%;
+}
 .memo {
   text-align: center;
-  overflow-wrap: normal; 
 }
 
 .dropzone {
@@ -91,24 +94,4 @@ input {
   text-align: center;
   margin: 2em 0;
   vertical-align: center;
-}
-$color: red;
-::-webkit-input-placeholder {
-  color: $color;
-}
-
-:-moz-placeholder { /* Firefox 18- */
-  color: $color;
-}
-
-::-moz-placeholder { /* Firefox 19+ */
-  color: $color;
-}
-
-:-ms-input-placeholder { /* IE 10+ */
-  color: $color;
-}
-
-::-ms-input-placeholder { /* Edge */
-  color: $color;
 }

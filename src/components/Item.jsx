@@ -24,6 +24,7 @@ class Item extends React.Component {
         draggable="true"
         onDragStart={this.handleDragStart}
         onDragEnd={this.handleDragEnd}
+        key={this.props.functionName}
       >       
         {this.props.functionName}
       </div>

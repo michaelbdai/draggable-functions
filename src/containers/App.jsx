@@ -9,53 +9,54 @@ class App extends React.Component {
     super(props);
     this.state = {
       result: '',
-    }
+    };
     this.handleClick = this.handleClick.bind(this);
     this.reset = this.reset.bind(this);
   }
   handleClick() {
+    let lastFnName = this.props.lastFnName;
     let arg = this.props.functionsArg;
     let chain = this.props.functionsChain;
-    let list = this.props.selectedFunctions.slice(0);
-    let fnArray = this.props.selectedFunctions;
     let fnDB = this.props.functionList;
+    // console.log(arg);
+    // console.log(chain);
+    // console.log(lastFnName);
     let result = '';
-    const rec = (arr, index = null, value = null) => {
-      if (arr.length === 0) {
-        return;
-      } else {
-        let output;
-        let errorMessage;
-        let fnName = arr.pop();
-        let args = arg[fnName].slice(0);
-        if (!!index && !!value) {
-          args[index] = JSON.stringify(value);
-        }
-        try {
-          output = fnDB[fnName].apply(null, args.map(a => JSON.parse(a)))
-        } catch(e) {
-          errorMessage = 
-            `Find error from function ${fnName}. \n 
-            Error type: ${e.name}. \n
-            Error message: ${e.message} \n`
-        }
-        if (errorMessage) {
-          result += errorMessage;
-          return result; 
-        } else {
-          result += `Get result from function ${fnName} => ${JSON.stringify(output)} \n`;
-          if (chain[fnName]) {
-            rec(arr, chain[fnName][1], output);
-          } else {
-            return;
-          }
-        }
+    let targetIndex;
+    let output;
+    for (
+      let counter = this.props.functionsCount - 1;
+      counter >= 0;
+      counter--
+    ){
+      let errorMessage;
+      let args = arg[counter].slice(0);
+      if (targetIndex !== undefined) args[targetIndex] = output;
+      // console.log('args is', args)
+      try {
+        output = fnDB[lastFnName].apply(null, args.map(a => JSON.parse(a)));
+      } catch(e) {
+        errorMessage = 
+          `Find error from function ${lastFnName}. \n 
+          Error type: ${e.name}. \n
+          Error message: ${e.message} \n`;
       }
-    };
-    rec(list);
+      if (errorMessage) {
+        result += errorMessage;
+        break; 
+      } else {
+        result += `Get result from function ${lastFnName} => ${JSON.stringify(output)} \n`;
+      }
+      // console.log('inlop', counter);
+      if (chain[counter]) {
+        // console.log(chain[counter]);
+        targetIndex = chain[counter][1];
+        lastFnName = chain[counter][0];
+      }
+    }
     this.setState({
       result: result,
-    })
+    });
   }
   reset() {
     this.props.reset();
@@ -65,37 +66,39 @@ class App extends React.Component {
     return (
       <div className="container">
         <List />
-        <ExpressionArea key={0} />
-        {this.props.selectedFunctions.slice(1).map((functionName, index) => (
+        <ExpressionArea key={0} id={0} />
+        {this.props.functionsChain.slice(1).map((functionName, index) => (
           <ExpressionArea
             key={index}
+            id={index}
             index={index}
             functionName={functionName}
           />
         ))}
-        <div className="button" onClick={this.handleClick}>
+        <div className="button" onClick={this.handleClick} key="button">
           Click to Calculate
         </div>       
-        <div className="result">
-          {this.state.result.split('\n').map(item => 
-            <p>{item}</p> 
+        <div className="result" key="result">
+          {this.state.result.split('\n').map((item, index) => 
+            <p key={index} >{item}</p> 
           )}
         </div>
       </div>
     )
   }
-}
+};
 
 const mapStateToProps = (state) => ({
-  selectedFunctions: state.selectedFunctions,
   functionsArg: state.functionsArg,
   functionsChain: state.functionsChain,
   functionList: state.functionList,
-})
+  lastFnName: state.lastFnName,
+  functionsCount: state.functionsCount,
+});
 const mapDispatchToProps = (dispatch) => ({
   reset: () => {
     dispatch(resetAll())
   },
-})
+});
 App = connect(mapStateToProps, mapDispatchToProps)(App);
-export default App
+export default App;
